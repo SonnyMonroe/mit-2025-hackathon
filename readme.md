@@ -2,20 +2,28 @@
 
 _March 27, 2025_
 
+
 This will allow you to build Lightning Network Apps ("L-Apps") without putting real funds at risk. And then convert that app to real Bitcoin/Lightning.
 
 Tutorial for the MIT Bitcoin Hackathon 2025. Register [here](https://mitbitcoin.devpost.com/) to participate and head to the discord to ask questions.
 
+**⚠️ Tutorial currently under construction. Will be "official" on April 1, 2025**
+
 ### LNBits can be used to:
 - Request and Send payments
 - Create separate wallet for each user/object
-- Every action is available via a simple API
+- Every action is available via a simple [API](https://v1.lnbits.com/docs)
 
 ### Expectations:
 - **In this tutorial you will learn:** 
     - how to get onto a testnet, 
     - transact on the testnet in the browser, 
-    - build a very simple python app which transacts in a website.
+    - build a simple python app which transacts in a website.
+- **Prior Experience:**
+    - no prior bitcoin/lightning experience
+    - some familiarity with coding is helpful
+    - no installs or computer setup needed if you chose the repl.it track
+    - traditional localhost install if you chose the local/docker track
 - **Duration:** 
     - 45 minute - Setup
     - 45 minute - Hello world demo
@@ -122,6 +130,8 @@ docker stop lnbits-mutiny-1  # should take ~20 secs to shutdown
 docker start lnbits-mutiny-1  # should take ~20 secs to startup
 ```
 - Head back to localhost:8000, enter the `usr` id.
+    - this might work automatically with your browser saving your login credentials
+    - but it's worth practicing 
 - Verify the wallet you named is still showing.
 
 #### Debug if nec.
@@ -186,12 +196,16 @@ _45 mins_
 - 3: Actually, Voltage runs on the big clouds like AWS and GCP, not their own servers. They are running the main program you need, LND which is connecting to the broader mutinynet network.
 
 ## Hungry for more
-
+- We can use this same application on LNBits for real sats without having to setup our node: https://v1.lnbits.com/wallet
+    - you can use login with github
+    - don't have real sats on the lightning network, maybe ask someone?
+- How to convert from Mutinynet ("test network") to Mainnet ("real bitcoin").
+- LNBits Extensions
 
 ---
 
-_Authored March 27, 2025,_
-_Will Sutton [github.com/sutt](https://github.com/sutt)_
-_Pavel [github.com/super-jaba](https://github.com/super-jaba)_
+- _Authored March 27, 2025,_
+- _Will Sutton [github.com/sutt](https://github.com/sutt)_
+- _Pavel [github.com/super-jaba](https://github.com/super-jaba)_
 
 **Special Thanks to:**
