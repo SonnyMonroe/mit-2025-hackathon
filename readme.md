@@ -2,35 +2,39 @@
 
 _March 27, 2025_
 
+**⚠️ Tutorial currently under construction. Will be "official" on April 1, 2025**
 
 This will allow you to build Lightning Network Apps ("L-Apps") without putting real funds at risk. And then convert that app to real Bitcoin/Lightning.
 
 Tutorial for the MIT Bitcoin Hackathon 2025. Register [here](https://mitbitcoin.devpost.com/) to participate and head to the discord to ask questions.
 
-**⚠️ Tutorial currently under construction. Will be "official" on April 1, 2025**
+In this tutorial we will setup **LNBits** and connect to Voltage lightning node running on **MutinyNet**. Then building our own app to send/recieve lightning payments based on the **LNBits API**.
 
-### LNBits can be used to:
+**LNBits can be used to:**
 - Request and Send payments
 - Create separate wallet for each user/object
 - Every action is available via a simple [API](https://v1.lnbits.com/docs)
+
+**MutinyNet is used to:** 
+- Allow you to experiment with lightning without using real bitcoin
 
 ### Expectations:
 - **In this tutorial you will learn:** 
     - how to get onto a testnet, 
     - transact on the testnet in the browser, 
     - build a simple python app which transacts in a website.
-- **Prior Experience:**
+- **Pre-Requisites:**
     - no prior bitcoin/lightning experience
     - some familiarity with coding is helpful
-    - no installs or computer setup needed if you chose the repl.it track
-    - traditional localhost install if you chose the local/docker track
+    - no installs or computer setup needed if you chose the repl.it track, so you'll need a (free-version) [repl.it](https://repl.it) account
+    - *=_or_ run a docker container locally track so you'll need docker installed locally for this one
 - **Duration:** 
     - 45 minute - Setup
     - 45 minute - Hello world demo
 
->**Tutorial Selection:** If you are doing this tutorial live (online or in-person at the hackathon) you'll have it easier because we can send you testnet coins when you're setup. Which makes your setup easier and you can continue below. 
->If you are following this tutorial before/after the hackathon you'll need a slightly more complicated setup, head over here for those [instructions](./two-node-setup.md)
- 
+_**Following Along:** If you are doing this tutorial live (online or in-person at the hackathon) we'll send you testnet coins when you're setup._
+
+_But if you are following this tutorial before/after the hackathon you'll need a slightly more complicated setup to get those coins yourself, head over here for those [instructions](./two-node-setup.md)_
 
 ---
 
@@ -56,7 +60,7 @@ _45 mins_
 ```bash
 git clone git@github.com:lnbits/lnbits.git 
 ```
-- The main branch should work fine, current version is ~`1.0.0rc7`
+- The main branch ("dev") should work fine, current version is ~`1.0.0rc9`
 
 ### Run with Docker
 - Build the image with docker
@@ -64,45 +68,8 @@ git clone git@github.com:lnbits/lnbits.git
 docker build -t local/lnbits .
 ```
 - Make a persistence volume in project root: `mkdir data`
-- Modify the env at project root: `.env`:
-```bash
-comment wallets and update to voidWallet
-```
+- Copy the `.env.example` at root to `.env`:
 - run with docker per project's [instructions](https://github.com/lnbits/lnbits/blob/main/docs/guide/installation.md#option-4-docker): (Note this assumes you are running this command from the project root.)
-```bash
-docker run \
-    --detach \
-    --publish 5000:5000 \
-    --volume ${PWD}/.env:/app/.env \
-    --volume ${PWD}/data/:/app/data \
-    local/lnbits
-```
-- Verify it works: it should be available on http://localhost:5000
-
-### Connect LNBits to node on voltage
-We want to get the following settings to fill for the next section: `LND_REST_ENDPOINT`,`LND_REST_MACAROON`, and `LND_REST_CERT`.
-  - the cert is not strictly necessary but you may experience degraded performance without it.
-#### Find connection settings on voltage admin
-- On Voltage Admin panel go to left sidebar
-  - get the macaroon in `base64` format (not `hex`)
-
->A helpfule guide for this is [here](https://docs.voltage.cloud/dev-sandbox-mutinynet).
-#### Modify `.env`
-Find where these settings live and comment out the initial values, fill them with your new settings
-```bash
-LND_REST_ENDPOINT="<subdomain.domain:port>" # my-node-name.u.voltageapp.io:8080
-LND_REST_CERT=""
-LND_REST_MACAROON="AgEDbG5kAvgBAwo...="
-```
-
-#### Re-run the docker with modifications:
-- you may need to shutdown the previous run: 
-```bash
-# view running containers
-docker ps
-# the run this with the conatiner name of the previous run
-docker stop <contianer-name>
-```
 ```bash
 docker run \
     --detach \
@@ -112,8 +79,51 @@ docker run \
     --volume ${PWD}/data/:/app/data \
     local/lnbits
 ```
-- Same command but with a `name` arg. This way we run run `docker stop  lnbits-mutiny-1` or `docker start lnbits-mutiny-1`.
-- Remember this command need to be run from project root due to the `PWD` variable.
+- Remember this command needs to be run from project root due to the `PWD` variable.
+- Verify it works: it should be available on http://localhost:5000
+- Create an admin user and password, 
+    we suggest just user: user, password: password
+- You should now see a wallet.
+- You should be in Admin Setup View in VoidWallet mode.
+    - You should see "VoidWallet" warning in the top right. We'll fix that next.
+- Grab your `usr` id from Top Right > My Account > Account Settings > User ID. Paste this somewhere in case your browser logs you out.
+
+### Connect LNBits to node on voltage
+We want to get the following settings to fill for the next section: `LND_REST_ENDPOINT`,`LND_REST_MACAROON`, and `LND_REST_CERT`.
+  - the cert is not necessary but you may experience degraded performance without it. Let's try with it blank to start.
+
+#### Find connection settings on voltage admin
+- Unlock you admin panel:
+    - in the top right find the 🔓 icon and enter your node's password.
+    - wait a couple seconds for the obscure content to become visible
+- Get the REST Endpoint:
+    - On the right panel, find you `API Endpoint` it should look something like: mutiny-1.u.voltageapp.io
+    - Add this to `LND_REST_ENDPOINT`
+- Get the Admin Macaroon:
+    - On left Voltage Admin panel go to left sidebar go:
+        - _Manage Access_ > _App Instruction_ > _Balance of Satoshis_
+    - Hit the eye icon next to "****" values to view 
+    - get the macaroon in `base64` format (not `hex`)
+    - Add this to `LND_REST_MACAROON`
+
+![macaroon](./assets/macaroon-1.png)
+- Note bene: we're not installing Balance of Satoshis but using the same macaroon for LNBits.
+
+>A helpfule guide with more visuals is [here](https://docs.voltage.cloud/dev-sandbox-mutinynet).
+
+#### Modify `.env`
+Find where these settings live and comment out the initial values, fill them with your new settings
+```bash
+LND_REST_ENDPOINT="<subdomain.domain:port>" # my-node-name.u.voltageapp.io:8080
+LND_REST_CERT=""  # deliberate blank string
+LND_REST_MACAROON="AgEDbG5kAvgBAwo...="  # paste your full one here
+```
+
+#### Re-run the docker with modifications:
+```bash
+docker stop lnbits-mutiny-1  # should take ~20 secs to shutdown
+docker start lnbits-mutiny-1  # should take ~20 secs to startup
+```
 
 #### Verify its working:
 - Head back to `http://localhost:5000/` Verify the site loads.
@@ -122,17 +132,7 @@ docker run \
     - Now create an invoice. 
 - This verifies that your locally running lnbits is connecting to your Lightning Node running on a Voltage server [3].
 
-#### Verify persistence is working
-- Save your `usr` id from TopRight > Account > Settings > usr
-- Start and stop the docker container:
-```bash
-docker stop lnbits-mutiny-1  # should take ~20 secs to shutdown
-docker start lnbits-mutiny-1  # should take ~20 secs to startup
-```
-- Head back to localhost:8000, enter the `usr` id.
-    - this might work automatically with your browser saving your login credentials
-    - but it's worth practicing 
-- Verify the wallet you named is still showing.
+
 
 #### Debug if nec.
 If everything's working, you can move to the next section. Otherwise here's a few things to check:
@@ -140,7 +140,7 @@ If everything's working, you can move to the next section. Otherwise here's a fe
 <summary>
 <b>Logs</b>
 </summary>
-Running `docker logs mutiny-1` should produce logs and you can search for this section:
+Running `docker logs lnbits-mutiny-1` should produce logs and you can search for this section:
 - Note how there are multiple attempts to connect to the backend before it succeeds. This is expected behavior and we see in this case it does eventually connect.
 
 ```bash
@@ -163,12 +163,26 @@ ble to connect to https://mutiny-1.u.voltageapp.io:8080.'
 </details>
 
 ## WebUI - Using LNBits in the browser
-Now we'll work in the browser seeing how to create 
-- Create wallets, 
-    - add name
-    - logout of account if you're already logged in
-- Save your user id from account
+- **Check you connection:**
+    - Create an invoice in one the wallets:
+        - Click "Create invoice" (or "Recieve" if app in mobile view)
+        - Enter 20 for amount and cick "Create Invoice"
+        - If you a QR code pops up, you've done it and this shows you have a backend connected. 
+    - If you are logged in as Admin user, you can go to _Settings_ (on the right) and view _Funding_ and see the _Node Balance_
+![settings-view](./assets/settings-1.png)
+
+- **Logout / Login**
+    - Sometimes your browser will refuse to log you out. Or you restarted/refreshed and want to work with new wallets. In this case you want to logout and login with a new `usr` id.
+    - Save your user id from account
+- **Create two wallets:**
+    - Clock "Add a new wallet" on the left sidebar:
+        - If you can't find this: some settings have the wallets aranged as a row on the top instead of column on the side.
+    - Create the 
 - You can test restarting your docker and your coins are still there.
+
+- Go to settings to see your sats on the node.
+- Recieve Funds
+- Make another wallet
 
 ## Recieve & Pay between your wallets
 - Create invoice
@@ -177,6 +191,8 @@ Now we'll work in the browser seeing how to create
     - pay
     - view history
     - try to pay too much
+
+
 ## First look at using the API
 - View quickstart API tutorial on the right sidebar
 
@@ -200,7 +216,6 @@ _45 mins_
     - you can use login with github
     - don't have real sats on the lightning network, maybe ask someone?
 - How to convert from Mutinynet ("test network") to Mainnet ("real bitcoin").
-- LNBits Extensions
 
 ---
 
