@@ -173,20 +173,22 @@ ble to connect to https://mutiny-1.u.voltageapp.io:8080.'
 
 - **Logout / Login**
     - Sometimes your browser will refuse to log you out. Or you restarted/refreshed and want to work with new wallets. In this case you want to logout and login with a new `usr` id.
-    - Save your user id from account
+    - Save your user id from account to be able to get back here.
 - **Create two wallets:**
-    - Clock "Add a new wallet" on the left sidebar:
+    - Click "Add a new wallet" on the left sidebar:
         - If you can't find this: some settings have the wallets aranged as a row on the top instead of column on the side.
-    - Create the 
-- You can test restarting your docker and your coins are still there.
-
-- Go to settings to see your sats on the node.
-- Recieve Funds
-- Make another wallet
+    - Create a new wallet called `AppWallet`
+    - Create a new wallet called `Customer1Wallet`
+- **Recieve seed payment from us:**
+    - Generate an invoice for 10,000 sats in your `AppWallet` and send it to us in discord. 
+    - Now you need to recieve your . Or use a workaround (TODO - add this later)
 
 ## Recieve & Pay between your wallets
-- Create invoice
-- Pay an invoice:
+- Create invoice in the wallet with no sats
+    - copy the invoice to your clipboard
+- Goto the wallet with the sats and click "Paste Request"
+    - Paste the invoice in, it should look like `
+Pay invoice:
     - decode
     - pay
     - view history
